@@ -26,16 +26,16 @@ function [pca_output, num_components, eig_vectors, mu] = pca_ims(data_cube)
 
     batch_size = 1e5;
     num_batches = ceil(size(centered_data,1)/batch_size);
-    score = zeros(size(centered_data,1), num_components, 'single', 'gpuArray');
+    score = zeros(size(centered_data,1), bands, 'single', 'gpuArray');
 
-    e = e(:, 1:num_components);
+    %e = e(:, 1:num_components);
 
     for i = 1:num_batches
         idx = (i-1)*batch_size + 1 : min(i*batch_size, size(centered_data,1));
         score(idx,:) = centered_data(idx,:) * e;
     end
 
-    pca_output = reshape(score, rows, cols, num_components);
+    pca_output = reshape(score, rows, cols, bands);
 
     pca_output = gather(pca_output);
     eig_vectors = gather(e);
