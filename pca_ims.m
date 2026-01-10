@@ -20,8 +20,8 @@ function [pca_output, num_components, eig_vectors, mu] = pca_ims(data_cube)
     
     cum_var = cumsum(gather(explained)); %gather is used to %display my value for testing
     %disp(cum_var);
-
-    num_components = find(cum_var >= 98, 1, 'first');
+    disp(cum_var);
+    num_components = find(cum_var > 98, 1, 'first');
     %disp(num_components);
 
     batch_size = 1e5;

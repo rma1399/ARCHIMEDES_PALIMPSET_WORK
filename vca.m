@@ -3,7 +3,8 @@ function S = vca(data, end_members)
     [~, bands] = size(data);
 
     data = data'; %transposes the data to make calculations easier
-    centered_data = data - mean(data, 2);
+    %centered_data = data - mean(data, 2);
+    centered_data = data;
 
     %this is to remove dimentionality and project the basis vectors
     [U, ~, ~] = svd(centered_data * centered_data', 'econ'); 
@@ -14,7 +15,7 @@ function S = vca(data, end_members)
     S = zeros(bands, end_members);
     for i = 1:end_members
         disp('here');
-        f = randn(end_members-1, 1);%point of randomness inside vca which can make reproducibility difficult
+        f = randn(end_members-1, 1); %point of randomness inside vca which can make reproducibility difficult
         f = f / norm(f);  
 
         %Project pixels onto f
