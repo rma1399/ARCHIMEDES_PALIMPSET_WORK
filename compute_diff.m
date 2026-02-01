@@ -18,5 +18,6 @@ function diff = compute_diff(r, g, b, data_cube, res_log)
     %diff = mean(log(1 + (flat(:) - mean(flat(:))).^2));
     %diff = var(image, 0, 'all')-var(double(image-res_log),0,'all');
     res_im = sqrt(sum(image.^2, 3)); 
+    res_im = (res_im - min(res_im(:))) / (max(res_im(:)) - min(res_im(:)));
     diff = var(double(res_log - res_im), 0, 'all');
 end

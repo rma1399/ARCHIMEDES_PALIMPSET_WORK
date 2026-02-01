@@ -10,66 +10,47 @@ if isequal(mnf_data, 0)
     mnf_data = data;
 end
 
-% Transpose to match Python behavior
-data  = data.';       % [nbands x npixels]
-data2 = mnf_data.';   % [nbands x npixels]
+data  = data.';       
+data2 = mnf_data.';   
 
 [num_bands, num_pix] = size(data);
 
-%% Magnitude of vectors
 magnitude = sum(data.^2, 1);
 
 idx1 = find(magnitude == max(magnitude));
 idx2 = find(magnitude == min(magnitude));
 
-% If multiple maxima/minima, keep first (matches Python behavior later)
 idx1 = idx1(1);
 idx2 = idx2(1);
 
-%% Output arrays
 endmembers       = zeros(num_bands, num);
 endmembers_index = zeros(1, num);
 
-% First two endmembers
 endmembers(:,1) = data(:, idx1);
 endmembers(:,2) = data(:, idx2);
 
 endmembers_index(1) = idx1;
 endmembers_index(2) = idx2;
 
-%% Projection setup
 data_proj = data2;
 I = eye(num_bands);
 
 volume = zeros(1, num);
 
-%% Main loop
 for i = 3:num
 
-    % Difference vector
-    diff = data_proj(:, idx2) - data_proj(:, idx1);   % [nbands x 1]
-
-    % Pseudoinverse
+    diff = data_proj(:, idx2) - data_proj(:, idx1); 
     pseudo = pinv(diff);
 
-    % Orthogonal projection
     data_proj = (I - diff * pseudo) * data_proj;
 
-    % Update reference index
     idx1 = idx2;
-
-    % Distance computation
     diff_new = sum(((data_proj(:, idx2) * ones(1, num_pix)) - data_proj).^2, 1);
-
-    % Find next endmember
     idx2 = find(diff_new == max(diff_new));
-
-    % Handle multiple maxima
     if numel(idx2) > 1
         idx2 = idx2(1);
     end
-
-    % Assign endmember
+    
     endmembers(:, i-1) = data(:, idx2);
     endmembers_index(i-1) = idx2;
 
